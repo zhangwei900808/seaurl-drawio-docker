@@ -37,8 +37,8 @@ COPY --from=build /tmp/seaurl-drawio/build/draw.war /tmp
 
 # Extract draw.io war & Update server.xml to set Draw.io webapp to root
 RUN mkdir -p $CATALINA_HOME/webapps/draw && \
-    unzip /tmp/drawio.war -d $CATALINA_HOME/webapps/draw && \
-    rm -rf /tmp/drawio.war /tmp/seaurl-drawio && \
+    unzip /tmp/draw.war -d $CATALINA_HOME/webapps/draw && \
+    rm -rf /tmp/draw.war /tmp/seaurl-drawio && \
     cd $CATALINA_HOME && \
     xmlstarlet ed \
         -P -S -L \
