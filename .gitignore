@@ -1,4 +1,5 @@
 bin
+.idea/
 classes
 etc/docker/*.sh
 node_modules
