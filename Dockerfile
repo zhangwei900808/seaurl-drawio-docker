@@ -10,7 +10,7 @@ RUN apt-get update -y && \
 
 RUN cd /tmp && \
     git clone --depth 1 https://github.com/zhangwei900808/seaurl-drawio.git && \
-    cd /tmp/drawio/etc/build/ && \
+    cd /tmp/seaurl-drawio/etc/build/ && \
     ant war
 
 FROM tomcat:9-jre11
@@ -33,12 +33,12 @@ RUN apt-get update -y && \
     apt-get clean && \
     rm -r /var/lib/apt/lists/*
 
-COPY --from=build /tmp/drawio/build/draw.war /tmp
+COPY --from=build /tmp/seaurl-drawio/build/draw.war /tmp
 
 # Extract draw.io war & Update server.xml to set Draw.io webapp to root
 RUN mkdir -p $CATALINA_HOME/webapps/draw && \
-    unzip /tmp/draw.war -d $CATALINA_HOME/webapps/draw && \
-    rm -rf /tmp/draw.war /tmp/drawio && \
+    unzip /tmp/seaurl-drawio.war -d $CATALINA_HOME/webapps/draw && \
+    rm -rf /tmp/seaurl-drawio.war /tmp/seaurl-drawio && \
     cd $CATALINA_HOME && \
     xmlstarlet ed \
         -P -S -L \
