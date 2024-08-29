@@ -38,7 +38,7 @@ spec:
         app: draw.io
     spec:
       containers:
-        - image: registry.cn-hangzhou.aliyuncs.com/com-seaurl/seaurl-drawio:latest
+        - image: registry.cn-hangzhou.aliyuncs.com/com-seaurl/seaurl-drawio:<tag>
           imagePullPolicy: IfNotPresent
           name: drawio
           ports:

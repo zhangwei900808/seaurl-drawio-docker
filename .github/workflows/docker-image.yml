@@ -9,12 +9,18 @@ on:
 
 jobs:
   build-and-push:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-latest'
+    env:
+      GIT_TAG: ${{ github.ref_name }}  # 直接使用 ref_name 提取出的标签名
     permissions:
       contents: write
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
+
+      - name: Extract Git tag
+        id: get_tag
+        run: echo "GIT_TAG=${GITHUB_REF#refs/tags/}" >> $GITHUB_ENV
 
       - name: Log in to Alibaba Cloud Registry
         uses: docker/login-action@v2
@@ -24,15 +30,15 @@ jobs:
           password: ${{ secrets.ALIYUN_REGISTRY_PASSWORD }}
 
       - name: Build Docker Image
-        run: docker build -t ${{ secrets.ALIYUN_REGISTRY_SERVER }}/com-seaurl/seaurl-drawio:latest .
+        run: docker build -t ${{ secrets.ALIYUN_REGISTRY_SERVER }}/com-seaurl/seaurl-drawio:${{ env.GIT_TAG }} .
 
       - name: Push Docker Image
-        run: docker push ${{ secrets.ALIYUN_REGISTRY_SERVER }}/com-seaurl/seaurl-drawio:latest
+        run: docker push ${{ secrets.ALIYUN_REGISTRY_SERVER }}/com-seaurl/seaurl-drawio:${{ env.GIT_TAG }}
 
       - name: Set up Kubernetes CLI
         uses: azure/setup-kubectl@v3
         with:
-          version: '1.24.6' # Specify the kubectl version you need
+          version: '1.24.0' # Specify the kubectl version you need
 
       - name: Configure kubectl
         run: |
@@ -40,6 +46,7 @@ jobs:
 
       - name: Deploy to Kubernetes
         run: |
+          sed -i "s/<tag>/${{ env.GIT_TAG }}/g" k8s-deploy.yaml
           kubectl create namespace drawio
           kubectl apply -f k8s-deploy.yaml -n drawio
 #          kubectl rollout status deployment/seaurl-drawio-deployment
