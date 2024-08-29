@@ -9,7 +9,7 @@ on:
 
 jobs:
   build-and-push:
-    runs-on: ubuntu-latest'
+    runs-on: ubuntu-latest
     env:
       GIT_TAG: ${{ github.ref_name }}  # 直接使用 ref_name 提取出的标签名
     permissions:
