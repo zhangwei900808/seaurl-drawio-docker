@@ -10,8 +10,6 @@ on:
 jobs:
   build-and-push:
     runs-on: ubuntu-latest
-    env:
-      GIT_TAG: ${{ github.ref_name }}  # 直接使用 ref_name 提取出的标签名
     permissions:
       contents: write
     steps:
@@ -29,11 +27,14 @@ jobs:
           username: ${{ secrets.ALIYUN_REGISTRY_USERNAME }}
           password: ${{ secrets.ALIYUN_REGISTRY_PASSWORD }}
 
-      - name: Build Docker Image
-        run: docker build -t ${{ secrets.ALIYUN_REGISTRY_SERVER }}/com-seaurl/seaurl-drawio:${{ env.GIT_TAG }} .
-
-      - name: Push Docker Image
-        run: docker push ${{ secrets.ALIYUN_REGISTRY_SERVER }}/com-seaurl/seaurl-drawio:${{ env.GIT_TAG }}
+      - name: Build And Publish Docker Image
+        run: |
+          # Get draw.io current latest version
+          wget https://raw.githubusercontent.com/jgraph/drawio/master/VERSION
+          export VERSION=`cat VERSION`
+          export TAG=`if [ "" == ${VERSION} ]; then echo "latest"; else echo ${VERSION} ; fi`
+          docker build -t ${{ secrets.ALIYUN_REGISTRY_SERVER }}/com-seaurl/seaurl-drawio:${TAG} .
+          docker push ${{ secrets.ALIYUN_REGISTRY_SERVER }}/com-seaurl/seaurl-drawio:${TAG}
 
       - name: Set up Kubernetes CLI
         uses: azure/setup-kubectl@v3
@@ -46,7 +47,11 @@ jobs:
 
       - name: Deploy to Kubernetes
         run: |
-          sed -i "s/<tag>/${{ env.GIT_TAG }}/g" k8s-deploy.yaml
+          # Get draw.io current latest version
+          wget https://raw.githubusercontent.com/jgraph/drawio/master/VERSION
+          export VERSION=`cat VERSION`
+          export TAG=`if [ "" == ${VERSION} ]; then echo "latest"; else echo ${VERSION} ; fi`
+          sed -i "s/<tag>/${TAG}/g" k8s-deploy.yaml
           kubectl create namespace drawio
           kubectl apply -f k8s-deploy.yaml -n drawio
 #          kubectl rollout status deployment/seaurl-drawio-deployment
