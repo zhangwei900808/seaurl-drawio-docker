@@ -11,6 +11,7 @@ metadata:
   labels:
     app: draw.io
 spec:
+  # 使用ip访问，所以设置成NodePort
   type: NodePort
   sessionAffinity: ClientIP
   sessionAffinityConfig:
