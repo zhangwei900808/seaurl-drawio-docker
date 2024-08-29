@@ -37,9 +37,9 @@ jobs:
           docker push ${{ secrets.ALIYUN_REGISTRY_SERVER }}/com-seaurl/seaurl-drawio:${TAG}
 
       - name: Set up Kubernetes CLI
-        uses: azure/setup-kubectl@v3
+        uses: azure/setup-kubectl@v2
         with:
-          version: '1.23.0' # Specify the kubectl version you need
+          version: '1.24.0' # Specify the kubectl version you need
 
       - name: Configure kubectl
         run: |
