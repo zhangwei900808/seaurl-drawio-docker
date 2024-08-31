@@ -30,7 +30,7 @@ jobs:
       - name: Build And Publish Docker Image
         run: |
           # Get draw.io current latest version
-          wget https://raw.githubusercontent.com/jgraph/drawio/master/VERSION
+          wget https://raw.githubusercontent.com/zhangwei900808/seaurl-drawio/main/VERSION
           export VERSION=`cat VERSION`
           export TAG=`if [ "" == ${VERSION} ]; then echo "latest"; else echo ${VERSION} ; fi`
           docker build -t ${{ secrets.ALIYUN_REGISTRY_SERVER }}/com-seaurl/seaurl-drawio:${TAG} .
@@ -49,7 +49,7 @@ jobs:
       - name: Deploy to Kubernetes
         run: |
           # Get draw.io current latest version
-          wget https://raw.githubusercontent.com/jgraph/drawio/master/VERSION
+          wget https://raw.githubusercontent.com/zhangwei900808/seaurl-drawio/main/VERSION
           export VERSION=`cat VERSION`
           export TAG=`if [ "" == ${VERSION} ]; then echo "latest"; else echo ${VERSION} ; fi`
           sed -i "s/<tag>/${TAG}/g" k8s-deploy.yaml
