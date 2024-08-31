@@ -53,6 +53,6 @@ jobs:
           export VERSION=`cat VERSION`
           export TAG=`if [ "" == ${VERSION} ]; then echo "latest"; else echo ${VERSION} ; fi`
           sed -i "s/<tag>/${TAG}/g" k8s-deploy.yaml
-          kubectl create namespace drawio
+          kubectl get namespace drawio || kubectl create namespace drawio
           kubectl apply -f k8s-deploy.yaml -n drawio
 #          kubectl rollout status deployment/seaurl-drawio-deployment
